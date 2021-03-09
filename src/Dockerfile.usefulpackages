@@ -1,16 +1,30 @@
 LABEL authors="Christoph Schranz <christoph.schranz@salzburgresearch.at>, Mathematical Michael <consistentbayes@gmail.com>"
 
+ENV OS_VERSION="ubuntu1804"
+
 USER root
 
 RUN pip install --no-cache-dir ipyleaflet plotly>=4.14.3 "ipywidgets>=7.5"
+
+RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/${OS_VERSION}/x86_64/7fa2af80.pub \
+        && wget https://developer.download.nvidia.com/compute/cuda/repos/${OS_VERSION}/x86_64/cuda-${OS_VERSION}.pin \
+        && mv cuda-${OS_VERSION}.pin /etc/apt/preferences.d/cuda-repository-pin-600
 
 # Install important packages and Graphviz
 RUN set -ex \
  && buildDeps=' \
     graphviz==0.11 \
+    opencv-python \
+    svgwrite \
+    scikit-image \
+    matplotlib \
+    git+https://github.com/planetlabs/maxrect.git \
+    cvxpy \
+    ecos \
+    scs \
 ' \
  && apt-get update \
- && apt-get -y install htop apt-utils graphviz libgraphviz-dev openssh-client \
+ && apt-get -y install htop apt-utils graphviz libgraphviz-dev openssh-client cuda\
  && pip install --no-cache-dir $buildDeps
 
 # Install various extensions

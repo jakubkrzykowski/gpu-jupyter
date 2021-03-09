@@ -8,7 +8,10 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master, docker-swarm ]
+    branches: [ master ]
+
+env:
+  REPO: "jakubkrzykowski"
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,7 +25,7 @@ jobs:
       run: ./generate-Dockerfile.sh
 
     - name: Build Image
-      run: docker build -t gpu-jupyter .build/  # will take a while
+      run: docker build -t $REPO/gpu-jupyter:latest .build/  # will take a while
 
-    - name: Quickstart Entrypoint Script
-      run: ./start-local.sh -p 8848 
+    - name: Docker push
+      run: docker push $REPO/gpu-jupyter:latest
